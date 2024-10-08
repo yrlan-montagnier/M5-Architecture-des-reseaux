@@ -6,7 +6,8 @@
 * Analyser l’impact de la redondance sur la disponibilité du réseau
 
 ## Sujet
-![image](https://hackmd.io/_uploads/SyptuZ7kJl.png)
+![image](https://github.com/user-attachments/assets/2a15691f-be10-42d4-80e2-702c063c7a02)
+
 
 ### 1. Introduction à la Redondance Réseau
 La redondance réseau est cruciale pour assurer la continuité des services et
@@ -48,7 +49,8 @@ liens et d’équipements.
 ### Rendus attendus
 Dans le rendu sont attendus :
 * Un schéma de l’architecture réseau implémentée
-![image](https://hackmd.io/_uploads/H1gOAMmkyx.png)
+
+![image](https://github.com/user-attachments/assets/bc32ff3f-8477-44bc-884e-ec5b07c1e28b)
 * Les configurations STP, EtherChannel, et HSRP pour chaque équipement concerné
 * Un rapport de test détaillant les scénarios de panne simulés et les résultats observés : Voir ci-dessous
 
@@ -177,8 +179,8 @@ La **priorité** de **R1** (`110`) est **plus élevée** que celle de **R2** (`1
 ### Vérifications 
 #### LACP  - Test de deconnexion d'un lien
 
-![image](https://hackmd.io/_uploads/B1hRS7Qkkg.png)
-![image](https://hackmd.io/_uploads/SkJZUXX1kx.png)
+![image](https://github.com/user-attachments/assets/162bba08-492c-4bc1-8b03-b5b0364d346c)
+![image](https://github.com/user-attachments/assets/f5e55386-20d2-4863-83a0-c176f774a4fb)
 
 On se place sur un VPC pour lancer un ping continu a travers un aggrégat.
 ```
@@ -196,18 +198,15 @@ Le LACP est fonctionnel.
 
 #### Panne d’un routeur (vérification HSRP)
 **R1** est le routeur **principal** et **actif** et l'interface sur laquelle j'ai configuré le HSRP est la `GigabitEthernet3/0`, on la repère avec cette ligne
-![image](https://hackmd.io/_uploads/H10m2GX1Jx.png)
-
-![image](https://hackmd.io/_uploads/SJ520MmJyx.png)
-
-![image](https://hackmd.io/_uploads/BkDUbXmkkl.png)
-
+![image](https://github.com/user-attachments/assets/66740df6-ecc3-454a-9f8b-4f6306b493ee)
+![image](https://github.com/user-attachments/assets/64135dc7-bbbb-45d7-990b-e774235147d9)
+![image](https://github.com/user-attachments/assets/6a59adca-904c-4ef1-bb2a-57a30d5b2591)
 
 ##### Explications
 Depuis un VPC, on lance un ping en continu vers l'adresse IP virtuelle (`10.1.1.254`)
 
 Sur R1, on **éteint** l'interface `GigabitEthernet3/0` pour **simuler une panne** au bout de quelques secondes (`icmp_seq=5`)
-![image](https://hackmd.io/_uploads/H1h6gQQk1x.png)
+![image](https://github.com/user-attachments/assets/f4b62500-8b49-4e5c-a4a2-3abe844c403e)
 
 Le statut n'est plus actif : `*Oct  8 21:05:18.699: %LINK-5-CHANGED: Interface GigabitEthernet3/0, changed state to administratively down`
 
@@ -223,7 +222,7 @@ PC1> ping 10.1.1.254 -t
 10.1.1.254 icmp_seq=6 timeout
 ```
 Puis au bout de quelques secondes, le routeur R2 prend le relai et le ping reprend rapidement
-![image](https://hackmd.io/_uploads/rJnKeX7Jke.png)
+![image](https://github.com/user-attachments/assets/04633665-2400-48c2-8bee-75daa73432c7)
 
 ```
 10.1.1.254 icmp_seq=6 timeout

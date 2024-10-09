@@ -14,14 +14,11 @@ La redondance réseau est cruciale pour assurer la continuité des services et
 minimiser les temps d’arrêt. Dans ce TP, nous allons explorer trois mécanismes
 de redondance essentiels :
 1. Spanning Tree Protocol (STP) : Prévient les boucles de commutation.
-2. EtherChannel : Agrège plusieurs liens physiques en un seul lien
-logique.
-3. Hot Standby Router Protocol (HSRP) : Fournit une redondance
-de passerelle par défaut.
+2. EtherChannel : Agrège plusieurs liens physiques en un seul lien logique.
+3. Hot Standby Router Protocol (HSRP) : Fournit une redondance de passerelle par défaut.
 
 ### 2. Étude de Cas : Entreprise ABC
-Vous êtes chargé d’implémenter la redondance réseau pour l’entreprise ABC,
-une société de commerce électronique qui nécessite une haute disponibilité.
+Vous êtes chargé d’implémenter la redondance réseau pour l’entreprise ABC, une société de commerce électronique qui nécessite une haute disponibilité.
 
 L’entreprise a les besoins suivants :
 * 2 commutateurs de distribution connectés à 4 commutateurs d’accès
@@ -30,21 +27,16 @@ L’entreprise a les besoins suivants :
 * Une architecture qui minimise les temps d’arrêt en cas de panne d’un équipement ou d’un lien
 
 ### 3. Tâches à Réaliser
-1. Configurez RSTP sur les commutateurs pour prévenir les boucles de
-couche 2.
-2. Mettez en place des EtherChannels entre les commutateurs de distribution
-et d’accès.
-3. Configurez HSRP sur les routeurs pour la redondance de la passerelle
-par défaut.
-4. Testez la résilience de votre configuration en simulant des pannes de
-liens et d’équipements.
+1. Configurez RSTP sur les commutateurs pour prévenir les boucles de couche 2.
+2. Mettez en place des EtherChannels entre les commutateurs de distribution et d’accès.
+3. Configurez HSRP sur les routeurs pour la redondance de la passerelle par défaut.
+4. Testez la résilience de votre configuration en simulant des pannes de liens et d’équipements.
 
 ### Ressources
 * Commutation Ethernet : https://cisco.goffinet.org/ccna/ethernet/commutation-ethernet-cisco/
 * EtherChannel : https://cisco.goffinet.org/ccna/redondance-de-liens/cisco-etherchannel-configuration-verification-depannage/
 * Spaning-Tree : https://cisco.goffinet.org/ccna/disponibilite-lan/lab-repartition-charge-rapid-spanning-tree-rspt-load-balancing/
 * HSRP : https://cisco.goffinet.org/ccna/disponibilite-lan/redondance-de-passerelle-host-standby-router-protocol-hsrp/
-
 
 ### Rendus attendus
 Dans le rendu sont attendus :
@@ -53,7 +45,6 @@ Dans le rendu sont attendus :
 ![image](https://github.com/user-attachments/assets/bc32ff3f-8477-44bc-884e-ec5b07c1e28b)
 * Les configurations STP, EtherChannel, et HSRP pour chaque équipement concerné
 * Un rapport de test détaillant les scénarios de panne simulés et les résultats observés : Voir ci-dessous
-
 
 ## Rendu
 
@@ -66,6 +57,7 @@ Tous les commutateurs doivent être configurés en mode RSTP pour garantir une c
 spanning-tree mode rapid-pvst
 ```
 Le mode Rapid PVST active une instance STP par VLAN avec une convergence rapide. Ce mode améliore la tolérance aux pannes en assurant que les boucles sont rapidement détectées et résolues.
+
 
 
 ### LACP
@@ -125,6 +117,27 @@ switchport trunk encapsulation dot1q
 switchport mode trunk
 ```
 
+#### Vérifications LACP  - Test de deconnexion d'un lien
+
+![image](https://github.com/user-attachments/assets/162bba08-492c-4bc1-8b03-b5b0364d346c)
+![image](https://github.com/user-attachments/assets/f5e55386-20d2-4863-83a0-c176f774a4fb)
+
+On se place sur un VPC pour lancer un ping continu a travers un aggrégat.
+```
+ping -t 10.1.1.25
+```
+
+On débranche un lien `Ethernet 0/0` entre un commutateur de distribution et un commutateur d'accès pour observer le comportement du LACP. 
+```
+interface Ethernet 0/0
+shutdown
+```
+
+Le trafic continue à circuler sur le lien restant `Ethernet 0/1`
+Le LACP est fonctionnel.
+
+---
+
 ### Mise en place HSRP
 Le **HSRP** fournit une **redondance de passerelle par défaut** en permettant à **plusieurs routeurs** de partager **une adresse IP virtuelle**, qui sera **visible par le reste du réseau comme une seule passerelle virtuelle**. Si l’un des routeurs échoue, l’autre prend automatiquement le relais.
 
@@ -164,9 +177,6 @@ standby 10 ip 10.1.1.254
 standby 10 priority 100
 standby 10 preempt
 ```
-
-
-
 #### Explication de la configuration
 `standby 10 ip 10.1.1.254` configure l'adresse IP virtuelle (`10.1.1.254`) que les clients utiliseront comme passerelle. Ce sera l'adresse IP unique de notre routeur 'virtuel'.
 
@@ -176,27 +186,7 @@ La **priorité** de **R1** (`110`) est **plus élevée** que celle de **R2** (`1
 
 `standby 10 preempt` assure que si le routeur principal revient en ligne après une panne, il redeviendra automatiquement le routeur actif.
 
-### Vérifications 
-#### LACP  - Test de deconnexion d'un lien
-
-![image](https://github.com/user-attachments/assets/162bba08-492c-4bc1-8b03-b5b0364d346c)
-![image](https://github.com/user-attachments/assets/f5e55386-20d2-4863-83a0-c176f774a4fb)
-
-On se place sur un VPC pour lancer un ping continu a travers un aggrégat.
-```
-ping -t 10.1.1.25
-```
-
-On débranche un lien `Ethernet 0/0` entre un commutateur de distribution et un commutateur d'accès pour observer le comportement du LACP. 
-```
-interface Ethernet 0/0
-shutdown
-```
-
-Le trafic continue à circuler sur le lien restant `Ethernet 0/1`
-Le LACP est fonctionnel.
-
-#### Panne d’un routeur (vérification HSRP)
+#### Vérifications HSRP - Panne d’un routeur
 **R1** est le routeur **principal** et **actif** et l'interface sur laquelle j'ai configuré le HSRP est la `GigabitEthernet3/0`, on la repère avec cette ligne
 ![image](https://github.com/user-attachments/assets/66740df6-ecc3-454a-9f8b-4f6306b493ee)
 ![image](https://github.com/user-attachments/assets/64135dc7-bbbb-45d7-990b-e774235147d9)
@@ -237,6 +227,8 @@ Puis au bout de quelques secondes, le routeur R2 prend le relai et le ping repre
 84 bytes from 10.1.1.254 icmp_seq=15 ttl=255 time=7.620 ms
 84 bytes from 10.1.1.254 icmp_seq=16 ttl=255 time=4.538 ms
 ```
+
+---
 
 #### Panne d’un commutateur
 Éteins un commutateur de distribution pour voir si le réseau continue à fonctionner via l'autre commutateur de distribution grâce au RSTP.

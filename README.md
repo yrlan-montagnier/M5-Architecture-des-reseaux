@@ -58,7 +58,7 @@ spanning-tree mode rapid-pvst
 ```
 Le mode Rapid PVST active une instance STP par VLAN avec une convergence rapide. Ce mode améliore la tolérance aux pannes en assurant que les boucles sont rapidement détectées et résolues.
 
-
+---
 
 ### LACP
 L'**EtherChannel** est utilisé pour **agréger plusieurs liens physiques entre les commutateurs en un seul lien logique**, **augmentant** ainsi **la bande passante** *(en mode actif)* et offrant de la **redondance**. Si un des liens tombe, le trafic est **redirigé automatiquement** vers les autres.

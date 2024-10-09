@@ -58,6 +58,38 @@ spanning-tree mode rapid-pvst
 ```
 Le mode Rapid PVST active une instance STP par VLAN avec une convergence rapide. Ce mode améliore la tolérance aux pannes en assurant que les boucles sont rapidement détectées et résolues.
 
+#### Vérifications 
+```
+IOU1# sh span
+
+VLAN0001
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    32769
+             Address     aabb.cc00.0100
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
+             Address     aabb.cc00.0100
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Et2/2               Desg FWD 100       128.11   P2p
+Et2/3               Desg FWD 100       128.12   P2p
+Et3/0               Desg FWD 100       128.13   P2p
+Et3/1               Desg FWD 100       128.14   P2p
+Et3/2               Desg FWD 100       128.15   P2p
+Et3/3               Desg FWD 100       128.16   P2p
+Po1                 Desg FWD 56        128.65   P2p
+Po2                 Desg FWD 56        128.66   P2p
+Po3                 Desg FWD 56        128.67   P2p
+Po4                 Desg FWD 56        128.68   P2p
+Po5                 Desg FWD 56        128.69   P2p
+```
+
+
 ---
 
 ### LACP

@@ -1,9 +1,9 @@
 # TP3
-
-# Schéma de l’architecture
+# Adaptation de l'architecture
+## Schéma de l’infra
 ![image](https://github.com/user-attachments/assets/86b1c811-38e8-4189-8009-1c8aec477b34)
 
-# Plan d’adressage respectant le principe de VLSM pour tous les VLANs.
+## Plan d’adressage respectant le principe de VLSM pour tous les VLANs.
 
 Il prend en compte les informations suivantes : 
 * Marketing : 8 personnes, utilisation de ressources cloud uniquement
@@ -12,13 +12,40 @@ Il prend en compte les informations suivantes :
 * RH : 3 personnes, 1 serveur
 * Administration : 4 personnes, utilisation de ressources cloud uniquement
 
-| VLAN           | Adresse réseau | Adresses IP disponibles       | Adresse Broadcast |
-| -------------- | -------------- | ----------------------------- | ----------------- |
-| Marketing (10)      | 10.10.10.0/28  | 14 (10.10.10.1 - 10.10.10.14)  | 10.10.10.15        |
-| Developpement (20)  | 10.20.20.0/27  | 30 (10.20.20.1 - 10.20.20.30) | 10.20.20.31       |
-| IT (30)             | 10.30.30.0/28  | 14 (10.30.30.1 - 10.30.30.14)   | 10.30.30.15        |
-| RH (40)            | 10.40.40.0/29  | 6 (10.40.40.1 - 10.40.40.6)   | 10.40.40.7        |
-| Administration (50) | 10.50.50.0/29  | 6 (10.50.50.1 - 10.50.50.6)   | 10.50.50.7        |
+J'ai utilisé des masques de sous réseaux en /24, mais voici le plan qui aurait du être utilisé pour respecter le principe de VLSM.
+
+## Plan d'adressage que j'aurais du utiliser
+|        VLAN         | Adresse réseau |    Adresses IP disponibles    |   Gateway   | Adresse Broadcast |
+|:-------------------:|:--------------:|:-----------------------------:|:-----------:|:-----------------:|
+|   Marketing (10)    | 10.10.10.0/28  | 13(10.10.10.1 - 10.10.10.13)  | 10.10.10.14 |    10.10.10.15    |
+| Developpement (20)  | 10.20.20.0/27  | 29 (10.20.20.1 - 10.20.20.29) | 10.20.20.30 |    10.20.20.31    |
+|       IT (30)       | 10.30.30.0/28  | 13 (10.30.30.1 - 10.30.30.13) | 10.30.30.14 |    10.30.30.15    |
+|       RH (40)       | 10.40.40.0/29  |  5 (10.40.40.1 - 10.40.40.5)  | 10.40.40.6  |    10.40.40.7     |
+| Administration (50) | 10.50.50.0/29  |  5 (10.50.50.1 - 10.50.50.5)  | 10.50.50.6  |    10.50.50.7     |
+
+## Tableau des machines que j'aurais du utiliser
+|        VLAN         |       Hôte        |   Adresse IP    |
+|:-------------------:|:-----------------:|:---------------:|
+|   Marketing (10)    |     PC-MARKET     |  10.10.10.1/28  |
+| Developpement (20)  |      PC-DEV       |  10.20.20.1/27  |
+|       IT (30)       |      PC-ADM1      |  10.30.30.1/28  |
+|       IT (30)       |      PC-ADM2      |  10.30.30.2/28  |
+|       IT (30)       |      SRV-DEV      | 10.30.30.100/28 |
+|       IT (30)       |      SRV-RH       | 10.30.30.101/28 |
+|       RH (40)       |       PC-RH       |  10.40.40.0/29  |
+| Administration (50) | PC-ADMINISTRATION |  10.50.50.0/29  |
+
+## Tableau d'adressage que j'ai utilisé
+|        VLAN         |       Hôte        |   Adresse IP    |
+|:-------------------:|:-----------------:|:---------------:|
+|   Marketing (10)    |     PC-MARKET     | 10.10.10.10/24  |
+| Developpement (20)  |      PC-DEV       | 10.20.20.10/24  |
+|       IT (30)       |      PC-ADM1      | 10.30.30.10/24  |
+|       IT (30)       |      PC-ADM2      | 10.30.30.20/24  |
+|       IT (30)       |      SRV-DEV      | 10.30.30.100/24 |
+|       IT (30)       |      SRV-RH       | 10.30.30.101/24 |
+|       RH (40)       |       PC-RH       | 10.40.40.10/24  |
+| Administration (50) | PC-ADMINISTRATION | 10.50.50.10/24  |
 
 # Configurations complètes des équipements: 
 * IOU1 : 
@@ -38,6 +65,23 @@ Les équipements sont interconnectés via des liens trunk et des agrégations (P
 
 # Mise en place HSRP
 Le protocole HSRP (Hot Standby Router Protocol) est utilisé pour assurer la redondance des passerelles pour chaque VLAN.
+
+Pour chaque **Interface VLAN**, on **configure une adresse IP statique**, puis, on lui donne une IP "standby" identifiée par un groupe (10) avec : `standby 10 ip 10.10.10.254`
+
+Cette adresse IP Virtuelle sera partagée entre les deux switchs
+
+|        VLAN         |  Switch L3   | Adresse IP | Adresse IP virtuelle -  HSRP |
+|:-------------------:|:------------:|:----------:|:----------------------------:|
+|   Marketing (10)    | SW1 (Passif) | 10.10.10.1 |         10.10.10.254         |
+|   Marketing (10)    | SW2 (Actif)  | 10.10.10.2 |         10.10.10.254         |
+| Developpement (20)  | SW1 (Passif) | 10.20.20.1 |         10.20.20.254         |
+| Developpement (20)  | SW2 (Actif)  | 10.20.20.2 |         10.20.20.254         |
+|       IT (30)       | SW1 (Passif) | 10.30.30.1 |         10.30.30.254         |
+|       IT (30)       | SW2 (Actif)  | 10.30.30.2 |         10.30.30.254         |
+|       RH (40)       | SW1 (Passif) | 10.40.40.1 |         10.40.40.254         |
+|       RH (40)       | SW2 (Actif)  | 10.40.40.2 |         10.40.40.254         |
+| Administration (50) | SW1 (Passif) | 10.50.50.1 |         10.50.50.254         |
+| Administration (50) | SW2 (Actif)  | 10.50.50.2 |         10.50.50.254         |
 
 ## Configuration HSRP - IOU1
 ```
@@ -105,16 +149,178 @@ standby 50 ip 10.50.50.254
 standby 50 preempt
 ```
 
+## Vérifications
+### SW1
+On voit que le switch 1 est passif : `State is Standby`
+
+On retrouve l'adresse IP virtuelle : `Virtual IP address is 10.10.10.254`
+
+Le switch passif (SW1) : `Standby router is local`
+
+Le switch actif (SW2) : `Active router is 10.10.10.2, priority 100 (expires in 9.648 sec)`
+
+La priorité : `Priority 100 (default 100)`
+```
+SW1# sh standby
+Vlan10 - Group 10
+  State is Standby
+    1 state change, last state change 00:02:24
+  Virtual IP address is 10.10.10.254
+  Active virtual MAC address is 0000.0c07.ac0a (MAC Not In Use)
+    Local virtual MAC address is 0000.0c07.ac0a (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 1.008 secs
+  Preemption enabled
+  Active router is 10.10.10.2, priority 100 (expires in 9.648 sec)
+  Standby router is local
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl10-10" (default)
+Vlan20 - Group 20
+  State is Standby
+    1 state change, last state change 00:02:26
+  Virtual IP address is 10.20.20.254
+  Active virtual MAC address is 0000.0c07.ac14 (MAC Not In Use)
+    Local virtual MAC address is 0000.0c07.ac14 (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 0.656 secs
+  Preemption enabled
+  Active router is 10.20.20.2, priority 100 (expires in 10.384 sec)
+  Standby router is local
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl20-20" (default)
+Vlan30 - Group 30
+  State is Standby
+    1 state change, last state change 00:02:28
+  Virtual IP address is 10.30.30.254
+  Active virtual MAC address is 0000.0c07.ac1e (MAC Not In Use)
+    Local virtual MAC address is 0000.0c07.ac1e (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 1.328 secs
+  Preemption enabled
+  Active router is 10.30.30.2, priority 100 (expires in 9.728 sec)
+  Standby router is local
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl30-30" (default)
+Vlan40 - Group 40
+  State is Standby
+    1 state change, last state change 00:02:26
+  Virtual IP address is 10.40.40.254
+  Active virtual MAC address is 0000.0c07.ac28 (MAC Not In Use)
+    Local virtual MAC address is 0000.0c07.ac28 (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 2.416 secs
+  Preemption enabled
+  Active router is 10.40.40.2, priority 100 (expires in 10.768 sec)
+  Standby router is local
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl40-40" (default)
+Vlan50 - Group 50
+  State is Standby
+    1 state change, last state change 00:02:27
+  Virtual IP address is 10.50.50.254
+  Active virtual MAC address is 0000.0c07.ac32 (MAC Not In Use)
+    Local virtual MAC address is 0000.0c07.ac32 (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 2.512 secs
+  Preemption enabled
+  Active router is 10.50.50.2, priority 100 (expires in 8.656 sec)
+  Standby router is local
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl50-50" (default)
+```
+### SW2
+On voit que le switch 2 est actif : `State is Active`
+
+On retrouve l'adresse IP virtuelle : `Virtual IP address is 10.10.10.254`
+
+Le routeur actif : `Active router is local`
+
+Le routeur passif (SW1) : `Standby router is 10.10.10.1, priority 100 (expires in 9.504 sec)`
+
+La priorité : `Priority 100 (default 100)`
+```
+SW2#$ sh standby
+Vlan10 - Group 10
+  State is Active
+    2 state changes, last state change 00:02:28
+  Virtual IP address is 10.10.10.254
+  Active virtual MAC address is 0000.0c07.ac0a (MAC In Use)
+    Local virtual MAC address is 0000.0c07.ac0a (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 0.912 secs
+  Preemption enabled
+  Active router is local
+  Standby router is 10.10.10.1, priority 100 (expires in 9.504 sec)
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl10-10" (default)
+Vlan20 - Group 20
+  State is Active
+    2 state changes, last state change 00:02:28
+  Virtual IP address is 10.20.20.254
+  Active virtual MAC address is 0000.0c07.ac14 (MAC In Use)
+    Local virtual MAC address is 0000.0c07.ac14 (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 0.736 secs
+  Preemption enabled
+  Active router is local
+  Standby router is 10.20.20.1, priority 100 (expires in 9.888 sec)
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl20-20" (default)
+Vlan30 - Group 30
+  State is Active
+    2 state changes, last state change 00:02:17
+  Virtual IP address is 10.30.30.254
+  Active virtual MAC address is 0000.0c07.ac1e (MAC In Use)
+    Local virtual MAC address is 0000.0c07.ac1e (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 0.704 secs
+  Preemption enabled
+  Active router is local
+  Standby router is 10.30.30.1, priority 100 (expires in 10.384 sec)
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl30-30" (default)
+Vlan40 - Group 40
+  State is Active
+    2 state changes, last state change 00:02:27
+  Virtual IP address is 10.40.40.254
+  Active virtual MAC address is 0000.0c07.ac28 (MAC In Use)
+    Local virtual MAC address is 0000.0c07.ac28 (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 0.576 secs
+  Preemption enabled
+  Active router is local
+  Standby router is 10.40.40.1, priority 100 (expires in 10.592 sec)
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl40-40" (default)
+Vlan50 - Group 50
+  State is Active
+    2 state changes, last state change 00:02:29
+  Virtual IP address is 10.50.50.254
+  Active virtual MAC address is 0000.0c07.ac32 (MAC In Use)
+    Local virtual MAC address is 0000.0c07.ac32 (v1 default)
+  Hello time 3 sec, hold time 10 sec
+    Next hello sent in 1.696 secs
+  Preemption enabled
+  Active router is local
+  Standby router is 10.50.50.1, priority 100 (expires in 9.152 sec)
+  Priority 100 (default 100)
+  Group name is "hsrp-Vl50-50" (default)
+```
+
 # Mise en place des ACL's
 ## 1. — Le VLAN IT (30) doit pouvoir communiquer avec tous les autres VLANs et tous les serveurs.
 ```
 ip access-list extended VLAN30_IT_ALLOW_ANY
-    permit ip 10.30.30.0 0.0.0.255 any
+	permit ip 10.30.30.0 0.0.0.255 any (1318 matches)
+	permit icmp 10.30.30.0 0.0.0.255 any
+	permit tcp 10.30.30.0 0.0.0.255 any
+	permit udp 10.30.30.0 0.0.0.255 any
 ```
 
 ## 2. — Les autres VLANs ne doivent pas pouvoir communiquer directement entre eux.
 
 ## 3. — Le VLAN RH (40) doit pouvoir accéder à son serveur dédié dans le VLAN IT.
+### Configuration de l'ACL
 ```
 ip access-list extended VLAN40_RH_ALLOW-SRV-RH
     permit udp any host 224.0.0.2 eq 1985
@@ -127,6 +333,19 @@ ip access-list extended VLAN40_RH_ALLOW-SRV-RH
     deny ip 10.40.40.0 0.0.0.255 10.20.20.0 0.0.0.255
     deny ip 10.40.40.0 0.0.0.255 10.30.30.0 0.0.0.255
     deny ip 10.40.40.0 0.0.0.255 10.50.50.0 0.0.0.255
+```
+### Vérifications
+Les RH peuvent ping leur serveur dédié **(10.30.30.100)** mais ne peuvent pas ping le serveur de développement **(10.30.30.101)**
+```
+PC-RH> ping 10.30.30.100
+
+84 bytes from 10.30.30.100 icmp_seq=1 ttl=63 time=8.788 ms
+84 bytes from 10.30.30.100 icmp_seq=2 ttl=63 time=9.104 ms
+^C
+PC-RH> ping 10.30.30.101
+
+*10.40.40.2 icmp_seq=1 ttl=255 time=10.781 ms (ICMP type:3, code:13, Communication administratively prohibited)
+*10.40.40.2 icmp_seq=2 ttl=255 time=7.494 ms (ICMP type:3, code:13, Communication administratively prohibited)
 ```
 
 ## 4. — Le VLAN Développement (20) doit pouvoir accéder à ses 3 serveurs dédiés dans le VLAN IT.
@@ -144,6 +363,19 @@ ip access-list extended VLAN20_Developpement_ALLOW-SRV-DEV*
     deny ip 10.20.20.0 0.0.0.255 10.30.30.0 0.0.0.255
     deny ip 10.20.20.0 0.0.0.255 10.40.40.0 0.0.0.255
     deny ip 10.20.20.0 0.0.0.255 10.50.50.0 0.0.0.255
+```
+### Vérifications
+Les DEV peuvent ping leur serveur dédié **(10.20.20.100)** mais ne peuvent pas ping le serveur de développement **(10.20.20.101)**
+```
+PC-DEV> ping 10.20.20.100
+
+84 bytes from 10.20.20.100 icmp_seq=1 ttl=63 time=8.788 ms
+84 bytes from 10.20.20.100 icmp_seq=2 ttl=63 time=9.104 ms
+^C
+PC-DEV> ping 10.20.20.101
+
+*10.40.40.2 icmp_seq=1 ttl=255 time=10.781 ms (ICMP type:3, code:13, Communication administratively prohibited)
+*10.40.40.2 icmp_seq=2 ttl=255 time=7.494 ms (ICMP type:3, code:13, Communication administratively prohibited)
 ```
 
 ## 5. — Les VLANs Marketing et Administration doivent pouvoir accéder à Internet pour utiliser les ressources cloud.
@@ -257,6 +489,20 @@ spanning-tree mst configuration
     instance 3 vlan 30
 exit
 ```
+
+## Appliquer les priorités
+On applique les priorités appropriées sur chaque switch avec les commandes : 
+```
+# Configuration pour l'instance 1
+spanning-tree mst 1 priority 8192
+
+# Configuration pour l'instance 2
+spanning-tree mst 2 priority 8192
+
+# Configuration pour l'instance 3
+spanning-tree mst 3 priority 8192
+```
+
 # Port-Security pour VLAN IT (30)
 ## 1. Activation de la sécurité par port (IOU8/IOU9)
 Pour sécuriser le VLAN IT, nous allons activer la sécurité par port sur les interfaces connectées aux PC de ce VLAN. 

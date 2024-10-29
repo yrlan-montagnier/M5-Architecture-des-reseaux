@@ -532,63 +532,23 @@ PC2> ping 192.168.2.10
 
 ### 2. Analyser les chemins choisis par OSPF et EIGRP
 ```
-R1#sh ip route ospf
-Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
-       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
-       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
-       E1 - OSPF external type 1, E2 - OSPF external type 2
-       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
-       ia - IS-IS inter area, * - candidate default, U - per-user static route
-       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
-       + - replicated route, % - next hop override
+PC1> trace 192.168.1.10
+trace to 192.168.1.10, 8 hops max, press Ctrl+C to stop
+ 1   10.1.0.254   9.164 ms  8.508 ms  25.522 ms
+ 2   10.1.10.5   37.915 ms  78.048 ms  45.144 ms
+ 3   10.1.10.1   104.047 ms  56.449 ms  78.698 ms
+ 4   10.10.0.1   87.966 ms  150.513 ms  96.507 ms
+ 5   10.100.0.5   157.708 ms  157.619 ms  128.453 ms
+ 6   *192.168.1.10   168.583 ms (ICMP type:3, code:3, Destination port unreachable)
 
-Gateway of last resort is not set
-
-      10.0.0.0/8 is variably subnetted, 17 subnets, 3 masks
-O        10.0.0.0/24 [110/2] via 10.10.0.6, 01:29:32, GigabitEthernet1/0
-O        10.1.0.0/24 [110/3] via 10.1.10.2, 01:16:53, GigabitEthernet0/0
-O        10.1.10.4/30 [110/2] via 10.1.10.2, 01:17:03, GigabitEthernet0/0
-O IA     10.2.0.0/24 [110/5] via 10.10.0.6, 01:08:30, GigabitEthernet1/0
-                     [110/5] via 10.10.0.1, 01:08:30, GigabitEthernet2/0
-O IA     10.2.20.0/30 [110/3] via 10.10.0.6, 01:28:50, GigabitEthernet1/0
-                      [110/3] via 10.10.0.1, 01:22:02, GigabitEthernet2/0
-O IA     10.2.20.4/30 [110/4] via 10.10.0.6, 01:08:30, GigabitEthernet1/0
-                      [110/4] via 10.10.0.1, 01:08:30, GigabitEthernet2/0
-O        10.10.0.8/30 [110/2] via 10.10.0.6, 01:29:32, GigabitEthernet1/0
-O        10.10.0.12/30 [110/2] via 10.10.0.1, 01:22:02, GigabitEthernet2/0
-O E1     10.100.0.0/30 [110/21] via 10.10.0.1, 01:22:02, GigabitEthernet2/0
-O E1     10.100.0.4/30 [110/21] via 10.10.0.1, 01:22:02, GigabitEthernet2/0
-O E1     10.100.0.8/30 [110/21] via 10.10.0.1, 01:22:02, GigabitEthernet2/0
-O E1  192.168.1.0/24 [110/21] via 10.10.0.1, 01:22:02, GigabitEthernet2/0
-O E1  192.168.2.0/24 [110/21] via 10.10.0.1, 01:22:02, GigabitEthernet2/0
-
-R4# sh ip route ospf
-Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
-       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
-       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
-       E1 - OSPF external type 1, E2 - OSPF external type 2
-       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
-       ia - IS-IS inter area, * - candidate default, U - per-user static route
-       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
-       + - replicated route, % - next hop override
-
-Gateway of last resort is not set
-
-      10.0.0.0/8 is variably subnetted, 16 subnets, 3 masks
-O IA     10.0.0.0/24 [110/3] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O        10.1.0.0/24 [110/2] via 10.1.10.6, 01:18:08, GigabitEthernet0/0
-O IA     10.2.0.0/24 [110/6] via 10.1.10.1, 01:09:35, GigabitEthernet1/0
-O IA     10.2.20.0/30 [110/4] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O IA     10.2.20.4/30 [110/5] via 10.1.10.1, 01:09:35, GigabitEthernet1/0
-O IA     10.10.0.0/30 [110/2] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O IA     10.10.0.4/30 [110/2] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O IA     10.10.0.8/30 [110/3] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O IA     10.10.0.12/30 [110/3] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O E1     10.100.0.0/30 [110/22] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O E1     10.100.0.4/30 [110/22] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O E1     10.100.0.8/30 [110/22] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O E1  192.168.1.0/24 [110/22] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
-O E1  192.168.2.0/24 [110/22] via 10.1.10.1, 01:19:05, GigabitEthernet1/0
+PC1> trace 192.168.2.10
+trace to 192.168.2.10, 8 hops max, press Ctrl+C to stop
+ 1   10.1.0.254   16.619 ms  3.713 ms  13.092 ms
+ 2   10.1.10.5   44.354 ms  49.305 ms  45.857 ms
+ 3   10.1.10.1   100.420 ms  86.614 ms  81.829 ms
+ 4   10.10.0.1   108.134 ms  125.001 ms  136.252 ms
+ 5   10.100.0.9   147.402 ms  156.295 ms  168.086 ms
+ 6   *192.168.2.10   192.786 ms (ICMP type:3, code:3, Destination port unreachable)
 
 R10# sh ip route
 Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
@@ -625,14 +585,25 @@ C        10.100.0.8/30 is directly connected, GigabitEthernet3/0
 L        10.100.0.10/32 is directly connected, GigabitEthernet3/0
 D     192.168.1.0/24 [90/3072] via 10.100.0.5, 01:25:03, GigabitEthernet2/0
 D     192.168.2.0/24 [90/3072] via 10.100.0.9, 01:25:03, GigabitEthernet3/0
-
 ```
 
 ### 3. Simuler des pannes de liens et observer la convergence
-On tente des ping continu et on éteint des interfaces de routeur pour tester la redondance.
+On tente des ping continu et on éteint une des interfaces du routeur R3 pour tester la redondance.
 
 On constate que les pings reviennent très rapidement en passant par une autre route.
+```
+interface GigabitEthernet0/0
+ip address 10.10.0.1 255.255.255.252
+no shutdown
 
+PC2> ping 10.1.0.10
+
+84 bytes from 10.1.0.10 icmp_seq=1 ttl=60 time=164.810 ms
+84 bytes from 10.1.0.10 icmp_seq=2 ttl=60 time=125.220 ms
+10.1.0.10 icmp_seq=3 timeout
+10.1.0.10 icmp_seq=4 timeout
+84 bytes from 10.1.0.10 icmp_seq=5 ttl=60 time=140.267 ms
+```
 ### 4. Comparer le contenu des bases de données OSPF dans chaque zone
 On voit qu'en fonction du routeur sur lequel on lance la commande, le retour est différent.
 

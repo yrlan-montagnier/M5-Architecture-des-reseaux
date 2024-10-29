@@ -253,6 +253,8 @@ PC1> ping 2001:db8:c::2
 ## 6. Analyser le comportement en cas de panne d’un lien
 On coupe le lien GigabitEthernet0/0 qui va de R1 vers R2
 ![image](https://github.com/user-attachments/assets/b43613bf-cdfa-4077-ac52-e9aa6aec640f)
+
+Au bout de quelques secondes, le ping passe par une autre route et reprend
 ```
 R1(config)#int GigabitEthernet 0/0
 R1(config-if)#shut

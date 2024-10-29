@@ -404,11 +404,11 @@ router eigrp 100
 
 ## 3. Identifier les réseaux à annoncer dans EIGRP
 Les réseaux à annoncer sont déjà identifiés dans les commandes ci-dessus (les network statements). Pour rappel, voici les réseaux annoncés par chaque routeur :
-* **R1 :** 192.168.10.0/24, 10.0.0.0/30, 10.0.0.4/30, 10.0.0.16/30
-* **R2 :** 192.168.20.0/24, 10.0.0.8/30, 10.0.0.12/30, 10.0.0.0/30
+* **R1 :** 192.168.10.0/24, 10.0.0.0/30, 10.0.0.4/30, 10.0.0.8/30
+* **R2 :** 192.168.20.0/24, 10.0.0.0/30, 10.0.0.12/30, 10.0.0.16/30
 * **R3 :** 10.0.0.4/30, 10.0.0.16/30, 10.0.0.20/30, 10.0.0.24/30
 * **R4 :** 10.0.0.8/30, 10.0.0.12/30, 10.0.0.20/30, 10.0.0.28/30
-* **R5 :** 192.168.30.0/24, 10.0.0.20/30, 10.0.0.24/30, 10.0.0.28/30
+* **R5 :** 192.168.30.0/24, 10.0.0.24/30, 10.0.0.28/30
 
 ## 4. Vérifier les relations de voisinage EIGRP
 Après avoir configuré EIGRP, vérifie les relations de voisinage (ou adjacences) avec la commande suivante sur chaque routeur :

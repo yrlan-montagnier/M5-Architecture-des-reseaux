@@ -14,9 +14,9 @@
 
 ## Plan d’adressage IPv6
 * **Liens entre routeurs :** `2001:db8:1::/64` à `2001:db8:8::/64`
-* **LAN1 (R1) :** `2001:db8:A::/64`
-* **LAN2 (R2) :** `2001:db8:B::/64`
-* **LAN3 (R5) :** `2001:db8:C::/64`
+* **LAN1 (`R1`) :** `2001:db8:A::/64`
+* **LAN2 (`R2`) :** `2001:db8:B::/64`
+* **LAN3 (`R5`) :** `2001:db8:C::/64`
 
 ## 1. Configurer les adresses IPv6 sur toutes les interfaces des routeurs
 ### R1
@@ -232,7 +232,7 @@ R   2001:DB8:C::/64 [120/2]
      via FE80::18, GigabitEthernet3/0
 ```
 ## 5. Tester la connectivité entre les LANs
-Depuis PC1, on tente de ping PC2 et PC3
+Depuis `PC1`, on tente de ping `PC2` et `PC3`
 ```
 PC1> ping 2001:db8:b::2
 
@@ -275,10 +275,10 @@ PC1> ping 2001:db8:b::2
 ![image](https://github.com/user-attachments/assets/58d45fce-5882-41cb-a057-fb2f10235dfc)
 
 ## Plan d’adressage IPv4
-— Liens entre routeurs : 10.0.0.0/30 à 10.0.0.28/30
-— LAN1 (R6) : 192.168.10.0/24
-— LAN2 (R7) : 192.168.20.0/24
-— LAN3 (R10) : 192.168.30.0/24
+* Liens entre routeurs : `10.0.0.0/30` à `10.0.0.28/30`
+* LAN1 (`R1`) : `192.168.10.0/24`
+* LAN2 (`R2`) : `192.168.20.0/24`
+* LAN3 (`R2`) : `192.168.30.0/24`
 
 ## 1. Configurer les adresses IPv4 sur toutes les interfaces des routeurs
 ### R1
@@ -406,11 +406,11 @@ router eigrp 100
 
 ## 3. Identifier les réseaux à annoncer dans EIGRP
 Les réseaux à annoncer sont déjà identifiés dans les commandes ci-dessus (les network statements). Pour rappel, voici les réseaux annoncés par chaque routeur :
-* **R1 :** 192.168.10.0/24, 10.0.0.0/30, 10.0.0.4/30, 10.0.0.8/30
-* **R2 :** 192.168.20.0/24, 10.0.0.0/30, 10.0.0.12/30, 10.0.0.16/30
-* **R3 :** 10.0.0.4/30, 10.0.0.16/30, 10.0.0.20/30, 10.0.0.24/30
-* **R4 :** 10.0.0.8/30, 10.0.0.12/30, 10.0.0.20/30, 10.0.0.28/30
-* **R5 :** 192.168.30.0/24, 10.0.0.24/30, 10.0.0.28/30
+* **R1 :** `192.168.10.0/24`, `10.0.0.0/30`, `10.0.0.4/30`, `10.0.0.8/30`
+* **R2 :** `192.168.20.0/24`, `10.0.0.0/30`, `10.0.0.12/30`, `10.0.0.16/30`
+* **R3 :** `10.0.0.4/30`, `10.0.0.16/30`, `10.0.0.20/30`, `10.0.0.24/30`
+* **R4 :** `10.0.0.8/30`, `10.0.0.12/30`, `10.0.0.20/30`, `10.0.0.28/30`
+* **R5 :** `192.168.30.0/24`, `10.0.0.24/30`, `10.0.0.28/30`
 
 ## 4. Vérifier les relations de voisinage EIGRP
 Après avoir configuré EIGRP, vérifie les relations de voisinage (ou adjacences) avec la commande suivante sur chaque routeur :
@@ -542,8 +542,8 @@ D     192.168.30.0/24 [90/3072] via 10.0.0.30, 00:03:54, GigabitEthernet3/0
 ## 6. Tester la connectivité entre les réseaux
 On utilise la commande ping pour vérifier la connectivité entre les réseaux :
 
-* Depuis PC1, on essaie de faire un ping vers PC2 (192.168.20.1) et PC3 (192.168.30.1).
-* Depuis PC2, on essaie de faire un ping vers PC1 (192.168.10.1) et PC3.
+* Depuis PC1, on essaie de faire un ping vers PC2 (`192.168.20.1`) et PC3 (`192.168.30.1`).
+* Depuis PC2, on essaie de faire un ping vers PC1 (`192.168.10.1`) et PC3.
 * Depuis PC3, on fais un ping vers PC1 et PC2.
 
 Si la connectivité est en place, cela signifie qu’EIGRP fonctionne correctement et que les routeurs connaissent bien tous les réseaux de destination.

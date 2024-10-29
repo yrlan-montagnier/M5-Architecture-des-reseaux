@@ -1,4 +1,4 @@
-# TP5 - RIPng EIGRP
+-# TP5 - RIPng EIGRP
 
 ## Objectifs
 * Comprendre les mécanismes de RIPng et EIGRP
@@ -542,9 +542,9 @@ D     192.168.30.0/24 [90/3072] via 10.0.0.30, 00:03:54, GigabitEthernet3/0
 ## 6. Tester la connectivité entre les réseaux
 On utilise la commande ping pour vérifier la connectivité entre les réseaux :
 
-* Depuis PC1, on essaie de faire un ping vers PC2 (`192.168.20.1`) et PC3 (`192.168.30.1`).
-* Depuis PC2, on essaie de faire un ping vers PC1 (`192.168.10.1`) et PC3.
-* Depuis PC3, on fais un ping vers PC1 et PC2.
+* Depuis `PC1`, on fais un ping vers `PC2` (`192.168.20.1`) et `PC3` (`192.168.30.1`).
+* Depuis `PC2`, on fais un ping vers `PC1` (`192.168.10.1`) et `PC3` (`192.168.30.1`).
+* Depuis `PC3`, on fais un ping vers `PC1` (`192.168.10.1`) et `PC2` (`192.168.20.1`).
 
 Si la connectivité est en place, cela signifie qu’EIGRP fonctionne correctement et que les routeurs connaissent bien tous les réseaux de destination.
 

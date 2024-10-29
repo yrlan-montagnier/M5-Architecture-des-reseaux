@@ -1,4 +1,4 @@
--# TP5 - RIPng EIGRP
+# TP5 - RIPng EIGRP
 
 ## Objectifs
 * Comprendre les mécanismes de RIPng et EIGRP
@@ -10,7 +10,7 @@
 # RIPng
 
 ## Topologie RIPng
-![image](https://github.com/user-attachments/assets/32567ad2-d68c-4564-bc52-301ab57ab0d0)
+![image](https://github.com/user-attachments/assets/6e2a3ee2-5675-48ea-bc5e-e358f4b57737)
 
 ## Plan d’adressage IPv6
 * **Liens entre routeurs :** `2001:db8:1::/64` à `2001:db8:8::/64`
@@ -272,7 +272,7 @@ PC1> ping 2001:db8:b::2
 ```
 
 # EIGRP
-![image](https://github.com/user-attachments/assets/58d45fce-5882-41cb-a057-fb2f10235dfc)
+![image](https://github.com/user-attachments/assets/a60b2009-7056-44f2-b94d-8618574815e0)
 
 ## Plan d’adressage IPv4
 * Liens entre routeurs : `10.0.0.0/30` à `10.0.0.28/30`

@@ -439,7 +439,15 @@ Cette commande doit afficher les voisins EIGRP directement connectés. Chaque ro
 
 ## 5. Analyser les tables de topologie et de routage
 
-Pour voir la table de topologie EIGRP, utilise la commande suivante :
+Pour voir la table de topologie EIGRP, on utilise la commande suivante : `show ip eigrp topology`
+
+Cela permet de voir tous les réseaux connus par EIGRP, ainsi que leurs métriques.
+
+Ensuite, pour voir la table de routage et confirmer que toutes les routes sont bien apprises, on utilise : `show ip route eigrp`
+
+Les routes `D` indiquent celles apprises via **EIGRP** dans la table de routage. 
+
+S'assurer que tous les réseaux des LAN (`192.168.10.0/24`, `192.168.20.0/24` et `192.168.30.0/24`) et les liens entre routeurs sont bien présents dans chaque table de routage.
 
 ```
 R3#show ip eigrp topology
@@ -474,9 +482,6 @@ P 10.0.0.24/30, 1 successors, FD is 2816
 P 192.168.20.0/24, 1 successors, FD is 3072
         via 10.0.0.17 (3072/2816), GigabitEthernet2/0
 ```
-Cela permet de voir tous les réseaux connus par EIGRP, ainsi que leurs métriques.
-
-Ensuite, pour voir la table de routage et confirmer que toutes les routes sont bien apprises, on utilise :
 
 ### R3
 ```
@@ -534,12 +539,16 @@ D     192.168.20.0/24 [90/3072] via 10.0.0.13, 00:03:42, GigabitEthernet1/0
 D     192.168.30.0/24 [90/3072] via 10.0.0.30, 00:03:54, GigabitEthernet3/0
 ```
 
-Les routes `D` indiquent celles apprises via **EIGRP** dans la table de routage. 
-
-S'assurer que tous les réseaux des LAN (`192.168.10.0/24`, `192.168.20.0/24` et `192.168.30.0/24`) et les liens entre routeurs sont bien présents dans chaque table de routage.
-
-
 ## 6. Tester la connectivité entre les réseaux
+On utilise la commande ping pour vérifier la connectivité entre les réseaux :
+
+* Depuis PC1, on essaie de faire un ping vers PC2 (192.168.20.1) et PC3 (192.168.30.1).
+* Depuis PC2, on essaie de faire un ping vers PC1 (192.168.10.1) et PC3.
+* Depuis PC3, on fais un ping vers PC1 et PC2.
+
+Si la connectivité est en place, cela signifie qu’EIGRP fonctionne correctement et que les routeurs connaissent bien tous les réseaux de destination.
+
+
 ```
 PC1> ping 192.168.20.10
 
@@ -550,11 +559,34 @@ PC1> ping 192.168.30.10
 
 84 bytes from 192.168.30.10 icmp_seq=1 ttl=61 time=68.337 ms
 84 bytes from 192.168.30.10 icmp_seq=2 ttl=61 time=35.257 ms
+
+PC2> ping 192.168.10.10
+
+84 bytes from 192.168.10.10 icmp_seq=1 ttl=61 time=54.841 ms
+84 bytes from 192.168.10.10 icmp_seq=2 ttl=61 time=42.347 ms
+
+PC2> ping 192.168.30.10
+
+84 bytes from 192.168.30.10 icmp_seq=1 ttl=61 time=55.355 ms
+84 bytes from 192.168.30.10 icmp_seq=2 ttl=61 time=45.848 ms
+
+PC3> ping 192.168.10.10
+
+84 bytes from 192.168.10.10 icmp_seq=1 ttl=61 time=72.832 ms
+84 bytes from 192.168.10.10 icmp_seq=2 ttl=61 time=59.292 ms
+
+PC3> ping 192.168.20.10
+
+84 bytes from 192.168.20.10 icmp_seq=1 ttl=61 time=62.093 ms
+84 bytes from 192.168.20.10 icmp_seq=2 ttl=61 time=53.788 ms
 ```
 
 ## 7. Observer le comportement d’EIGRP lors d’une panne de lien
-On coupe ce lien et on voit ce qui se passe : 
 ![image](https://github.com/user-attachments/assets/f8fd173b-3e03-44c9-8369-3278a0129027)
+
+Pour tester la tolérance de panne d’EIGRP, déconnecte l’un des liens entre deux routeurs (par exemple, entre R1 et R2). EIGRP devrait automatiquement recalculer les routes pour trouver un chemin alternatif.
+
+Les chemins alternatifs devraient apparaître dans la table de routage, et après quelques secondes, la connectivité devrait être rétablie.
 
 Le ping ne passe plus temporairement puis passe par une autre route
 
